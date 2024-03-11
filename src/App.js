@@ -13,6 +13,7 @@ import Login from './components/Login';
 import Professionals from './components/Professionals';
 import ProfLogin from './components/ProfLogin';
 import Order from './components/Order';
+import Profile from './components/Profile';
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
         <Route exact path="/profsignup" element={<Professionals />}></Route>
         <Route exact path="/proflogin" element={<ProfLogin />}></Route>
         <Route exact path="/orders" element={<Order />}></Route>
-    
+        <Route exact path="/profile" element={<Profile />}></Route>
       </Routes>
     </BrowserRouter>
     </>
