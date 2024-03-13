@@ -293,32 +293,7 @@ import { useNavigate } from 'react-router-dom';
 const Order = () => {
   const [serviceRequests, setServiceRequests] = useState([]);
   const [prof, setProf] = useState({})
-  // useEffect(() => {
-  //   const fetchServiceRequests = async () => {
-  //     try {
-  //       const authToken = localStorage.getItem('token');
-  //       // console.log(authToken)
-  //       const response = await fetch('http://localhost:1818/api/prof/fetchorderrequest', {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'auth-token': authToken,
-  //         },
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! Status: ${response.status}`);
-  //       }
-  //       console.log(response)
-  //       const data = await response.json();
-  //       setServiceRequests(data);
-  //     } catch (error) {
-  //       console.error('Error fetching service requests:', error.message);
-  //     }
-  //   };
-
-  //   fetchServiceRequests();
-  // }, []);
+  const today = new Date().toISOString().split('T')[0];   //for displace accept &cancel button for todays services
 
   useEffect(() => {
     const fetchServiceRequests = async () => {
@@ -414,6 +389,40 @@ const Order = () => {
     }
   };
 
+  //13 march
+  const cancelServiceRequest = async (requestId) => {
+    try {
+      const authToken = localStorage.getItem('token');
+
+      const response = await fetch(`http://localhost:1818/api/prof/cancelservice/${requestId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'auth-token': authToken,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      // Update the serviceRequests state after canceling the request
+      const updatedServiceRequests = serviceRequests.map((request) => {
+        if (request._id === requestId) {
+          return { ...request, status: 'canceled' }; // Assuming there's a status field in your service request
+        }
+        return request;
+      });
+
+      setServiceRequests(updatedServiceRequests);
+
+      console.log('Service request canceled successfully');
+    } catch (error) {
+      console.error('Error canceling service request:', error.message);
+    }
+  };
+
+
   const updateLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -436,7 +445,7 @@ const Order = () => {
             if (!response.ok) {
               throw new Error(`HTTP error! Status: ${response.status}`);
             }
-
+            alert('Service request canceled successfully');
             console.log('Location updated successfully!');
           } catch (error) {
             console.error('Error updating location:', error.message);
@@ -459,7 +468,7 @@ const Order = () => {
   return (
     <>
       <div>
-          <h1>Professinal Details</h1>
+        <h1>Professinal Details</h1>
         <div className='container'>
           <p>User ID: {prof._id}</p>
           <p>Username: {prof.name}</p>
@@ -469,8 +478,9 @@ const Order = () => {
           <p>Longitude: {prof.location && prof.location.coordinates ? prof.location.coordinates[0] : 'N/A'}</p>
         </div>
         <h1>Service Requests</h1>
-        {/* {console.log(serviceRequests)} */}
-        <ul>
+
+        {/* 12 march */}
+        {/* <ul>
           {serviceRequests
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .map((request) => (
@@ -480,11 +490,48 @@ const Order = () => {
                 <p>Time: {request.createdAt}</p>
                 <p>Customer: {request.customerId}</p>
                 <p>CustomerName: {request.customerName}</p>
-                {/* <p>Customer Email: {request.email}</p> */}
+                <p>Customer Email: {request.email}</p> 
                 <p>Professional: {request.professionalId}</p>
-                <button onClick={() => acceptServiceRequest(request._id)}>Accept Request</button>
+                {request.status !== 'accepted' && (
+                <button className='btn btn-primary ' onClick={() => acceptServiceRequest(request._id)}>Accept Request</button>
+                )}
+                {request.status !== 'canceled' && (
+                <button className='btn btn-primary mx-3' onClick={() => cancelServiceRequest(request._id)}>Cancel Request</button>
+                )}
               </li>
             ))}
+        </ul> */}
+
+        <ul>
+          {serviceRequests
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0,7)
+            .map((request) => {
+              const requestDate = new Date(request.createdAt).toISOString().split('T')[0];
+
+              return (
+                <li key={request._id}>
+                  <p>Request ID: {request._id}</p>
+                  <p>Status: {request.status}</p>
+                  <p>Time: {request.createdAt}</p>
+                  <p>Customer: {request.customerId}</p>
+                  <p>CustomerName: {request.customerName}</p>
+                  <p>Professional: {request.professionalId}</p>
+
+                  {requestDate === today && request.status !== 'accepted' && (
+                    <button className='btn btn-primary' onClick={() => acceptServiceRequest(request._id)}>
+                      Accept Request
+                    </button>
+                  )}
+
+                  {requestDate === today && request.status !== 'canceled' && (
+                    <button className='btn btn-primary mx-3' onClick={() => cancelServiceRequest(request._id)}>
+                      Cancel Request
+                    </button>
+                  )}
+                </li>
+              );
+            })}
         </ul>
       </div>
     </>
