@@ -264,6 +264,7 @@ const Profile = () => {
   return (
     <div className='container'>
       <h1>User Profile</h1>
+      <img src='https://api.multiavatar.com/Starcrasher.png?apikey=EFWs9oqXgeAa28' style={{'height':"100px"}} />
       <p>User ID: {user._id}</p>
       <p>Username: {user.name}</p>
       <p>Email: {user.email}</p>

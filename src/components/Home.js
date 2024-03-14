@@ -8,6 +8,8 @@ const Home = () => {
   const [userLatitude, setUserLatitude] = useState();
   const [userLongtitude, setuserLongtitude] = useState();
   const [user, setUser] = useState({});
+  const [city, setCity] = useState(''); // New state for selected city
+
   useEffect(() => {
     fetchData();
   }, [category]);
@@ -58,7 +60,38 @@ const Home = () => {
 
 
 
-  //10 march
+  //10 march (correct-14 march)
+  // const bookService = async (professionalId) => {
+  //   try {
+  //     const authToken = localStorage.getItem('token');
+
+  //     if (!authToken) {
+  //       console.error('Authentication token not found');
+  //       // Handle the case where the authentication token is missing
+  //       return;
+  //     }
+  //     // console.log(authToken);
+  //     const response = await fetch(`http://localhost:1818/api/prof/bookservice/${professionalId}`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'auth-token': authToken,
+  //       },
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+
+  //     console.log('Service booked successfully');
+  //     alert('Service is Booked');
+  //   } catch (error) {
+  //     console.error('Error booking service:', error.message);
+  //   }
+  // };
+
+
+  //14 march
   const bookService = async (professionalId) => {
     try {
       const authToken = localStorage.getItem('token');
@@ -77,22 +110,52 @@ const Home = () => {
         },
       });
 
+      //14 march
+      // const userResponse = await fetch('http://localhost:1818/api/auth/getuser', {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'auth-token': authToken,
+      //   },
+      // });
+      // const userData = await userResponse.json();
+      // console.log("leoleo", userData)
+      
+      // const emailContent = `Dear ${userData.name}, your service with {professional.name} has been booked successfully.`;
+  
+      // let dataSend = {
+      //   email: userData.email,
+      //   subject: 'Service Booking Confirmation',
+      //   message: emailContent,
+      // };
+  
+      console.log('Service booked successfully');
+      alert('Service is Booked');
+
+      // await fetch('http://localhost:1818/api/prof/sendmail', {
+      //   method: 'POST',
+      //   headers: {
+      //     Accept: "application/json",
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(dataSend),
+      // });
+
+      
+     
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      console.log('Service booked successfully');
-      alert('Service is Booked');
+      
     } catch (error) {
       console.error('Error booking service:', error.message);
     }
   };
 
 
-
-
-
-//11 march
+  //11 march
   // const fetchProfessionalsByCategory = async () => {
   //   try {
   //     const response = await fetch(`http://localhost:1818/api/prof/fetchprofessionalsbycategory/${category}`);
@@ -160,6 +223,23 @@ const Home = () => {
   };
 
 
+  //14 March
+  const fetchProfessionalsByCity = async () => {
+    try {
+      const response = await fetch(`http://localhost:1818/api/prof/fetchprofessionalsbycity/${city}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setFilteredProfessionals(data); // Update the filter based on the selected city
+    } catch (error) {
+      console.error('Error fetching professionals by city:', error.message);
+    }
+  };
+
+
+
   //12 March
   // useEffect(() => {
   //   const fetchUserProfile = async () => {
@@ -181,10 +261,10 @@ const Home = () => {
   //       setUser(userData);
   //       setUserLatitude(userData.location.coordinates[1]);
   //       setuserLongtitude(userData.location.coordinates[0]);
-        
+
   //     } catch (error) {
   //       console.error('Error fetching user profile:', error.message);
-        
+
   //     }
   //   };
 
@@ -192,7 +272,7 @@ const Home = () => {
   // }, []);
   // console.log(userLatitude);
   // console.log(userLongtitude);
-  
+
 
   //12 march part2
   useEffect(() => {
@@ -206,10 +286,10 @@ const Home = () => {
             'auth-token': authToken,
           },
         });
-        
+
         // If the first API request fails, try the second one
         if (!response.ok) {
-          console.log('Error fetching user profile. Trying the second API endpoint.');
+          // console.log('Error fetching user profile. Trying the second API endpoint.');
           const responseSecond = await fetch('http://localhost:1818/api/prof/getprofs', {
             method: 'GET',
             headers: {
@@ -217,7 +297,7 @@ const Home = () => {
               'auth-token': authToken,
             },
           });
-        
+
           if (!responseSecond.ok) {
             throw new Error(`HTTP error! Status: ${responseSecond.status}`);
           }
@@ -232,10 +312,10 @@ const Home = () => {
           setUserLatitude(userData.location.coordinates[1]);
           setuserLongtitude(userData.location.coordinates[0]);
         }
-        
+
       } catch (error) {
         console.error('Error fetching user profile:', error.message);
-        
+
       }
     };
 
@@ -263,6 +343,26 @@ const Home = () => {
         <button className='btn btn-primary' onClick={fetchProfessionalsByCategory}>Search</button>
       </div>
 
+      {/* 14 march */}
+      <div className="mb-4 mx-4">
+        <label htmlFor="citySelect" className="form-label">Select City:</label>
+        <select
+          className="form-select"
+          id="citySelect"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+        >
+          <option value="">Select a city</option>
+          <option value="Anand">Anand</option>
+          <option value="Ahmedabad">Ahmedabad</option>
+          {/* Add other city options as needed */}
+        </select>
+        <button className='btn btn-primary' onClick={fetchProfessionalsByCity}>Search</button>
+      </div>
+
+
+
+
       {/* <ul className="list-unstyled d-flex justify-content-center flex-wrap">
         {filteredProfessionals.map(professional => (
           <li key={professional._id} className="mb-4 mx-4">
@@ -284,7 +384,7 @@ const Home = () => {
         ))}
       </ul> */}
 
-<ul className="list-unstyled d-flex justify-content-center flex-wrap">
+      <ul className="list-unstyled d-flex justify-content-center flex-wrap">
         {filteredProfessionals.map((professional) => (
           <li key={professional._id} className="mb-4 mx-4">
             <div className="card" style={{ width: '18rem' }}>
