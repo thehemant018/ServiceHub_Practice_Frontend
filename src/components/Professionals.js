@@ -106,9 +106,9 @@ const Professionals = () => {
             }
         };
 
-        // Call the function to get user's location when the component mounts
+       
         getUserLocation();
-    }, []); // The empty dependency array ensures this effect runs only once when the component mounts
+    }, []); 
 
 
     const handleSubmit = async (e) => {

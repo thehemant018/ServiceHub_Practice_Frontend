@@ -14,6 +14,7 @@ import Professionals from './components/Professionals';
 import ProfLogin from './components/ProfLogin';
 import Order from './components/Order';
 import Profile from './components/Profile';
+import SelectService from './components/SelectService';
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
         <Route exact path="/proflogin" element={<ProfLogin />}></Route>
         <Route exact path="/orders" element={<Order />}></Route>
         <Route exact path="/profile" element={<Profile />}></Route>
+        {/* 17 march */}
+        <Route exact path="/service/:id" element={<SelectService/>} /> 
       </Routes>
     </BrowserRouter>
     </>

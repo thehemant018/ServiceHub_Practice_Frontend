@@ -1,5 +1,6 @@
 //8 march
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [professionals, setProfessionals] = useState([]);
@@ -9,6 +10,9 @@ const Home = () => {
   const [userLongtitude, setuserLongtitude] = useState();
   const [user, setUser] = useState({});
   const [city, setCity] = useState(''); // New state for selected city
+
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchData();
@@ -110,45 +114,15 @@ const Home = () => {
         },
       });
 
-      //14 march
-      // const userResponse = await fetch('http://localhost:1818/api/auth/getuser', {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'auth-token': authToken,
-      //   },
-      // });
-      // const userData = await userResponse.json();
-      // console.log("leoleo", userData)
-      
-      // const emailContent = `Dear ${userData.name}, your service with {professional.name} has been booked successfully.`;
-  
-      // let dataSend = {
-      //   email: userData.email,
-      //   subject: 'Service Booking Confirmation',
-      //   message: emailContent,
-      // };
-  
+
       console.log('Service booked successfully');
       alert('Service is Booked');
-
-      // await fetch('http://localhost:1818/api/prof/sendmail', {
-      //   method: 'POST',
-      //   headers: {
-      //     Accept: "application/json",
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(dataSend),
-      // });
-
-      
-     
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      
+
     } catch (error) {
       console.error('Error booking service:', error.message);
     }
@@ -240,6 +214,12 @@ const Home = () => {
 
 
 
+
+
+
+
+
+
   //12 March
   // useEffect(() => {
   //   const fetchUserProfile = async () => {
@@ -322,6 +302,11 @@ const Home = () => {
     fetchUserProfile();
   }, []);
 
+  const handleBookService = (professionalId) => {
+    // Instead of executing bookService, navigate to service detail page
+    navigate(`/service/${professionalId}`);
+  };
+
   return (
     <>
       <div className="mb-4 mx-4">
@@ -397,15 +382,24 @@ const Home = () => {
                 <p>Latitude: {professional.location && professional.location.coordinates ? professional.location.coordinates[1] : 'N/A'}</p>
                 <p>Longitude: {professional.location && professional.location.coordinates ? professional.location.coordinates[0] : 'N/A'}</p>
 
-                <button className="btn btn-primary" onClick={() => bookService(professional._id)}>
+                {/* <button className="btn btn-primary" onClick={() => bookService(professional._id)}>
                   Book
-                </button>
+                </button> */}
+                 <button className="btn btn-primary" onClick={() => handleBookService(professional._id)}>Book</button>
+         
               </div>
             </div>
             <hr />
           </li>
         ))}
       </ul>
+
+
+      {/* 17 march */}
+      
+
+
+
     </>
   );
 };

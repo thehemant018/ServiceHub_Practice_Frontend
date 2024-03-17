@@ -42,7 +42,7 @@
 //   const fetchUserBookedServices = async (userId, authToken) => {
 //     try {
 //       console.log('Fetching booked services for user ID:', userId);
-  
+
 //       const response = await fetch(`http://localhost:1818/api/prof/booked-services/${userId}`, {
 //         method: 'GET',
 //         headers: {
@@ -50,11 +50,11 @@
 //           'auth-token': authToken,
 //         },
 //       });
-  
+
 //       if (!response.ok) {
 //         throw new Error(`HTTP error! Status: ${response.status}`);
 //       }
-  
+
 //       const bookedServicesData = await response.json();
 //       // console.log('Booked services:', bookedServicesData);
 //       const sortedBookedServices = bookedServicesData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -64,7 +64,7 @@
 //       console.error('Error fetching booked services:', error);
 //     }
 //   };
-  
+
 
 
 //   return (
@@ -106,11 +106,48 @@ const Profile = () => {
   const navigate = useNavigate();
   const [serviceRequests, setServiceRequests] = useState([]);
   const today = new Date().toISOString().split('T')[0];
+
+  //13 march
+  // useEffect(() => {
+  //   const fetchUserProfile = async () => {
+  //     try {
+  //       const authToken = localStorage.getItem('token');
+  //       const response = await fetch('http://localhost:1818/api/auth/getuser', {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'auth-token': authToken,
+  //         },
+  //       });
+
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! Status: ${response.status}`);
+  //       }
+
+  //       const userData = await response.json();
+  //       setUser(userData);
+
+  //       // Fetch the user's booked services after fetching the user profile
+  //       fetchUserBookedServices(userData._id, authToken);
+  //     } catch (error) {
+  //       console.error('Error fetching user profile:', error.message);
+  //       navigate('/error');
+  //     }
+  //   };
+
+  //   fetchUserProfile();
+  // }, [navigate]);
+
   useEffect(() => {
+
     const fetchUserProfile = async () => {
       try {
         const authToken = localStorage.getItem('token');
-        const response = await fetch('http://localhost:1818/api/auth/getuser', {
+        let response;
+
+        // Try the first endpoint
+
+        response = await fetch('http://localhost:1818/api/auth/getuser', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -119,19 +156,36 @@ const Profile = () => {
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          // If the first endpoint fails, try the second one
+          // console.error(`Error fetching user profile from ${endpoint}. Status: ${response.status}`);
+          // endpoint = 'http://localhost:1818/api/auth/getprofs';
+          response = await fetch('http://localhost:1818/api/prof/getprofs', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'auth-token': authToken,
+            },
+          });
+
+          if (!response.ok) {
+            // If both endpoints fail, throw an error
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
         }
 
+        // If successful, parse and set user data
         const userData = await response.json();
         setUser(userData);
-
+        // console.log(userData);
         // Fetch the user's booked services after fetching the user profile
         fetchUserBookedServices(userData._id, authToken);
       } catch (error) {
         console.error('Error fetching user profile:', error.message);
-        navigate('/error');
+
       }
     };
+
+
 
     fetchUserProfile();
   }, [navigate]);
@@ -139,7 +193,7 @@ const Profile = () => {
   const fetchUserBookedServices = async (userId, authToken) => {
     try {
       console.log('Fetching booked services for user ID:', userId);
-  
+
       const response = await fetch(`http://localhost:1818/api/prof/booked-services/${userId}`, {
         method: 'GET',
         headers: {
@@ -147,11 +201,11 @@ const Profile = () => {
           'auth-token': authToken,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const bookedServicesData = await response.json();
       const sortedBookedServices = bookedServicesData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setBookedServices(sortedBookedServices);
@@ -159,8 +213,8 @@ const Profile = () => {
       console.error('Error fetching booked services:', error);
     }
   };
-  
- 
+
+
   const cancelServiceRequest = async (requestId) => {
     try {
       const authToken = localStorage.getItem('token');
@@ -194,29 +248,29 @@ const Profile = () => {
   };
 
   //13march
-  const calculateDistance = (ulon,ulat, plon,plat) => {
+  const calculateDistance = (ulon, ulat, plon, plat) => {
     const earthRadius = 6371; // Earth radius in kilometers
-  
-    const userLat=ulat;
-    const userLon=ulon;
-    const profLat=plat;
-    const profLon=plon;
+
+    const userLat = ulat;
+    const userLon = ulon;
+    const profLat = plat;
+    const profLon = plon;
     // const [userLat, userLon] = userCoordinates;
     // const [profLat, profLon] = professionalCoordinates;
-  
+
     const dLat = (profLat - userLat) * (Math.PI / 180);
     const dLon = (profLon - userLon) * (Math.PI / 180);
-  
+
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(userLat * (Math.PI / 180)) * Math.cos(profLat * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  
+
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  
+
     const distance = earthRadius * c; // Distance in kilometers
     return distance;
   };
-  
+
 
 
   const updateLocation = () => {
@@ -264,7 +318,7 @@ const Profile = () => {
   return (
     <div className='container'>
       <h1>User Profile</h1>
-      <img src='https://api.multiavatar.com/Starcrasher.png?apikey=EFWs9oqXgeAa28' style={{'height':"100px"}} />
+      <img src='https://api.multiavatar.com/Starcrasher.png?apikey=EFWs9oqXgeAa28' style={{ 'height': "100px" }} />
       <p>User ID: {user._id}</p>
       <p>Username: {user.name}</p>
       <p>Email: {user.email}</p>
@@ -272,7 +326,7 @@ const Profile = () => {
       <p>Longitude: {user.location && user.location.coordinates ? user.location.coordinates[0] : 'N/A'}</p>
       <h2>Booked Services History</h2>
       {/* 13 march */}
-        {/* for display 5 services use slice */}
+      {/* for display 5 services use slice */}
       {/* <ul>
         {bookedServices.slice(0, 5).map((service) => (
           <li key={service._id}>
@@ -295,31 +349,34 @@ const Profile = () => {
 
       {/* 14 march */}
       <ul>
-      {bookedServices
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0,7)
-      .map((service) => {
-        const serviceDate = new Date(service.createdAt).toISOString().split('T')[0];
+        {bookedServices
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 7)
+          .map((service) => {
+            const serviceDate = new Date(service.createdAt).toISOString().split('T')[0];
 
-        return (
-          <li key={service._id}>
-            {/* ... service information */}
-            <p>Service ID: {service._id}</p>
-            <p>Service Name: {service.serviceName}</p>
-            <p>Professional Name: {service.professionalName}</p>
-            <p>Status: {service.status}</p>
-            <p>Status: {service.createdAt}</p>
-            <p>Distance: {user.location ? calculateDistance(service.userlocation.coordinates[0], service.userlocation.coordinates[1], service.proflocation.coordinates[0], service.proflocation.coordinates[1]).toFixed(2) + ' km' : 'N/A'}</p>
-            
-            {serviceDate === today && service.status !== 'canceled' && (
-              <button className='btn btn-primary mx-3' onClick={() => cancelServiceRequest(service._id)}>
-                Cancel Request
-              </button>
-            )}
-          </li>
-        );
-      })}
-    </ul>
+            return (
+              <li key={service._id}>
+                {/* ... service information */}
+                <p>Service ID: {service._id}</p>
+                <p>Service Name: {service.serviceName}</p>
+                <p>Professional Name: {service.professionalName}</p>
+                <p>Status: {service.status}</p>
+                <p>Status: {service.createdAt}</p>
+                <p>Distance: {user.location ? calculateDistance(service.userlocation.coordinates[0], service.userlocation.coordinates[1], service.proflocation.coordinates[0], service.proflocation.coordinates[1]).toFixed(2) + ' km' : 'N/A'}</p>
+                              
+                <p>Direction: <a href={`https://www.google.com/maps/dir/${service.userlocation.coordinates[1]},${service.userlocation.coordinates[0]}/${service.proflocation.coordinates[1]},${service.proflocation.coordinates[0]}
+`} target="_blank" rel="noopener noreferrer">View on Map</a></p>
+
+                {serviceDate === today && service.status !== 'canceled' && (
+                  <button className='btn btn-primary mx-3' onClick={() => cancelServiceRequest(service._id)}>
+                    Cancel Request
+                  </button>
+                )}
+              </li>
+            );
+          })}
+      </ul>
 
 
 
