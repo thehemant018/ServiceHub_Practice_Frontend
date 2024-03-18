@@ -290,10 +290,14 @@
 //12march
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PiChart from './PiChart';
+
+
 const Order = () => {
   const [serviceRequests, setServiceRequests] = useState([]);
   const [prof, setProf] = useState({})
   const today = new Date().toISOString().split('T')[0];   //for displace accept &cancel button for todays services
+  const [ratingsData, setRatingsData] = useState({ 1: 0, 2: 0, 3: 1, 4: 0, 5: 0 });
 
   useEffect(() => {
     const fetchServiceRequests = async () => {
@@ -344,7 +348,7 @@ const Order = () => {
 
         const profData = await response.json();
         setProf(profData);
-
+        setRatingsData(profData.ratings);
 
       } catch (error) {
         console.error('Error fetching user profile:', error.message);
@@ -352,10 +356,15 @@ const Order = () => {
       }
     };
 
+
+
     fetchProfProfile();
 
     fetchServiceRequests();
+
   }, []);
+ 
+
 
   const acceptServiceRequest = async (requestId) => {
     try {
@@ -465,6 +474,8 @@ const Order = () => {
     updateLocation();
   }, []);
 
+  const ratingsArray = Object.entries(ratingsData).map(([rating, count]) => ({ rating: parseInt(rating), count }));
+
   return (
     <>
       <div>
@@ -474,9 +485,14 @@ const Order = () => {
           <p>Username: {prof.name}</p>
           <p>Email: {prof.email}</p>
           <p>Category: {prof.category}</p>
+          {/* <p>Rating :{averageRating.rating} stars</p> */}
           <p>Latitude: {prof.location && prof.location.coordinates ? prof.location.coordinates[1] : 'N/A'}</p>
           <p>Longitude: {prof.location && prof.location.coordinates ? prof.location.coordinates[0] : 'N/A'}</p>
         </div>
+
+        <h2>Overall Rating</h2>
+        <PiChart data={ratingsArray} />
+        
         <h1>Service Requests</h1>
 
         {/* 12 march */}
@@ -505,7 +521,7 @@ const Order = () => {
         <ul>
           {serviceRequests
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0,7)
+            .slice(0, 7)
             .map((request) => {
               const requestDate = new Date(request.createdAt).toISOString().split('T')[0];
 
@@ -534,6 +550,7 @@ const Order = () => {
             })}
         </ul>
       </div>
+
     </>
   );
 };

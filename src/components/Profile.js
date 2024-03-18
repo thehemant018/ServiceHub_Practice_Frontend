@@ -99,6 +99,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Rating from './Rating';
+import { Link } from 'react-router-dom';
+// import PiChart from './PiChart';
+// import ServiceFeedbackDetail from './ServiceFeedbackDetail';
 
 const Profile = () => {
   const [user, setUser] = useState({});
@@ -106,6 +110,10 @@ const Profile = () => {
   const navigate = useNavigate();
   const [serviceRequests, setServiceRequests] = useState([]);
   const today = new Date().toISOString().split('T')[0];
+
+  // 18 march
+  const [rating, setRating] = useState(0); // State to store user's rating
+  const [feedback, setFeedback] = useState('');
 
   //13 march
   // useEffect(() => {
@@ -315,6 +323,49 @@ const Profile = () => {
     updateLocation();
   }, []);
 
+
+
+  // 18 march
+  const handleRatingChange = (value) => {
+    setRating(value);
+  };
+
+  const handleFeedbackChange = (event) => {
+    setFeedback(event.target.value);
+  };
+
+  const saveRating = async (serviceId) => {
+    try {
+      const authToken = localStorage.getItem('token');
+      const response = await fetch('http://localhost:1818/api/ratings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'auth-token': authToken,
+        },
+        body: JSON.stringify({
+          serviceId,
+          rating,
+          feedback,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      alert('Rating saved successfully');
+      // You may want to refresh the page or update the UI after successful rating submission
+    } catch (error) {
+      console.error('Error saving rating:', error.message);
+    }
+  };
+
+  const handleRateService = (serviceId,userId,profId) => {
+    // console.log(serviceId);
+    navigate(`/service-feedback/${serviceId}/${userId}/${profId}`);
+  };
+
   return (
     <div className='container'>
       <h1>User Profile</h1>
@@ -325,27 +376,6 @@ const Profile = () => {
       <p>Latitude: {user.location && user.location.coordinates ? user.location.coordinates[1] : 'N/A'}</p>
       <p>Longitude: {user.location && user.location.coordinates ? user.location.coordinates[0] : 'N/A'}</p>
       <h2>Booked Services History</h2>
-      {/* 13 march */}
-      {/* for display 5 services use slice */}
-      {/* <ul>
-        {bookedServices.slice(0, 5).map((service) => (
-          <li key={service._id}>
-            <p>Service ID: {service._id}</p>
-            <p>Service Name: {service.serviceName}</p>
-            <p>Professional Name: {service.professionalName}</p>
-            <p>Status: {service.status}</p>
-            <p>Status: {service.createdAt}</p>
-            <p>Distance: {user.location ? calculateDistance(service.userlocation.coordinates[0],service.userlocation.coordinates[1],service.proflocation.coordinates[0],service.proflocation.coordinates[1]).toFixed(2) + ' km' : 'N/A'}</p>
-
-            {serviceDate === today && service.status !== 'canceled' && (
-              <button className='btn btn-primary mx-3' onClick={() => cancelServiceRequest(service._id)}>
-                Cancel Request
-              </button>
-            )}
-
-          </li>
-        ))};
-      </ul> */}
 
       {/* 14 march */}
       <ul>
@@ -363,8 +393,9 @@ const Profile = () => {
                 <p>Professional Name: {service.professionalName}</p>
                 <p>Status: {service.status}</p>
                 <p>Status: {service.createdAt}</p>
+                
                 <p>Distance: {user.location ? calculateDistance(service.userlocation.coordinates[0], service.userlocation.coordinates[1], service.proflocation.coordinates[0], service.proflocation.coordinates[1]).toFixed(2) + ' km' : 'N/A'}</p>
-                              
+
                 <p>Direction: <a href={`https://www.google.com/maps/dir/${service.userlocation.coordinates[1]},${service.userlocation.coordinates[0]}/${service.proflocation.coordinates[1]},${service.proflocation.coordinates[0]}
 `} target="_blank" rel="noopener noreferrer">View on Map</a></p>
 
@@ -373,13 +404,19 @@ const Profile = () => {
                     Cancel Request
                   </button>
                 )}
+
+                {/* <Link to={`/service-feedback/${service._id}`}>Leave Feedback</Link> */}
+                <button className="btn btn-primary" onClick={() => handleRateService(service._id,user._id,service.professionalId)}>Rate</button>
+
+
+
               </li>
             );
           })}
       </ul>
 
 
-
+         
     </div>
   );
 };
