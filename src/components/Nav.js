@@ -42,6 +42,9 @@ const Nav = () => {
                             <li className="nav-item">
                                 <Link className="nav-link" to="/profile">Profile</Link>
                             </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/admin-signup">Admin</Link>
+                            </li>
                         </ul>
                         {!localStorage.getItem('token')?<form className="d-flex">
                             <Link className="btn btn-primary mx-1" to="/login" role="button">Login</Link>

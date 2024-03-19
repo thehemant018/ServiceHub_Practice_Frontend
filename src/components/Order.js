@@ -491,7 +491,9 @@ const Order = () => {
         </div>
 
         <h2>Overall Rating</h2>
+        <div style={{ width: '400px', height: '500px' }}>
         <PiChart data={ratingsArray} />
+        </div>
         
         <h1>Service Requests</h1>
 

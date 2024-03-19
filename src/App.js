@@ -16,6 +16,9 @@ import Order from './components/Order';
 import Profile from './components/Profile';
 import SelectService from './components/SelectService';
 import ServiceFeedbackDetail from './components/ServiceFeedbackDetail';
+import AdminPage from './components/AdminPage';
+import AdminLogin from './components/AdminLogin';
+import AdminSignup from './components/AdminSignup';
 
 function App() {
   return (
@@ -36,6 +39,11 @@ function App() {
 
         {/* 18 march */}
         <Route exact path="/service-feedback/:id/:userId/:profId" element={<ServiceFeedbackDetail />}></Route>
+
+        {/* 19 march */}
+        <Route exact path="/admin" element={<AdminPage />}></Route>
+        <Route exact path="/admin-login" element={<AdminLogin />}></Route>
+        <Route exact path="/admin-signup" element={<AdminSignup />}></Route>
       </Routes>
     </BrowserRouter>
     </>

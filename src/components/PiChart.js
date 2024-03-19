@@ -1,6 +1,8 @@
+// 19 march
+
 import React, { useEffect, useRef } from 'react'
 import chart from 'chart.js/auto'
-const PiChart = ({data}) => {
+const PiChart = ({data,width = 50, height = 50 }) => {
     const chartRef=useRef(null);
     const chartInstance=useRef(null);
     useEffect(() => {
@@ -38,7 +40,8 @@ const PiChart = ({data}) => {
   return (
     <>
         <div>
-            <canvas ref={chartRef} style={{"width":"50px","height":"50px"}}></canvas>
+            {/* <canvas ref={chartRef} style={{"width":"50px","height":"50px"}}></canvas> */}
+            <canvas ref={chartRef} width={width} height={height}></canvas>
         </div>
     </>
   )

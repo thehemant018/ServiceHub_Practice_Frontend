@@ -10,7 +10,7 @@ const Home = () => {
   const [userLongtitude, setuserLongtitude] = useState();
   const [user, setUser] = useState({});
   const [city, setCity] = useState(''); // New state for selected city
-
+  const [searchOption, setSearchOption] = useState('service');
   const navigate = useNavigate();
 
 
@@ -196,6 +196,9 @@ const Home = () => {
     setCategory(e.target.value);
   };
 
+  const handleSearchOptionChange = (option) => {
+    setSearchOption(option);
+  };
 
   //14 March
   const fetchProfessionalsByCity = async () => {
@@ -309,7 +312,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="mb-4 mx-4">
+      {/* <div className="mb-4 mx-4">
         <label htmlFor="categorySelect" className="form-label">Select Service:</label>
         <select
           className="form-select"
@@ -323,13 +326,13 @@ const Home = () => {
           <option value="Pest">Pest</option>
           <option value="Wathchmen">Wathchmen</option>
 
-          {/* Add other service options as needed */}
+         
         </select>
         <button className='btn btn-primary' onClick={fetchProfessionalsByCategory}>Search</button>
-      </div>
+      </div> */}
 
       {/* 14 march */}
-      <div className="mb-4 mx-4">
+      {/* <div className="mb-4 mx-4">
         <label htmlFor="citySelect" className="form-label">Select City:</label>
         <select
           className="form-select"
@@ -340,11 +343,59 @@ const Home = () => {
           <option value="">Select a city</option>
           <option value="Anand">Anand</option>
           <option value="Ahmedabad">Ahmedabad</option>
-          {/* Add other city options as needed */}
+          
         </select>
         <button className='btn btn-primary' onClick={fetchProfessionalsByCity}>Search</button>
+      </div> */}
+
+
+      {/* 19 march */}
+      <div className="mb-4 mx-4">
+      <div>
+          <input type="radio" id="serviceOption" name="searchOption" value="service" checked={searchOption === 'service'} onChange={() => handleSearchOptionChange('service')} />
+          <label htmlFor="serviceOption">Select Service</label>
+        </div>
+        <div>
+          <input type="radio" id="cityOption" name="searchOption" value="city" checked={searchOption === 'city'} onChange={() => handleSearchOptionChange('city')} />
+          <label htmlFor="cityOption">Select City</label>
+        </div>
       </div>
 
+      {searchOption === 'service' && (
+        <div className="mb-4 mx-4">
+          <label htmlFor="categorySelect" className="form-label">Select Service:</label>
+          <select
+            className="form-select"
+            id="categorySelect"
+            value={category}
+            onChange={handleCategoryChange}
+          >
+            <option value="">Select a service</option>
+            <option value="Serviceman">Serviceman</option>
+            <option value="Carpenter">Carpenter</option>
+            <option value="Pest">Pest</option>
+            <option value="Wathchmen">Wathchmen</option>
+          </select>
+          <button className='btn btn-primary' onClick={fetchProfessionalsByCategory}>Search</button>
+        </div>
+      )}
+
+      {searchOption === 'city' && (
+        <div className="mb-4 mx-4">
+          <label htmlFor="citySelect" className="form-label">Select City:</label>
+          <select
+            className="form-select"
+            id="citySelect"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          >
+            <option value="">Select a city</option>
+            <option value="Anand">Anand</option>
+            <option value="Ahmedabad">Ahmedabad</option>
+          </select>
+          <button className='btn btn-primary' onClick={fetchProfessionalsByCity}>Search</button>
+        </div>
+      )}
 
 
 
