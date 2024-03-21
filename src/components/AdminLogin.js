@@ -9,6 +9,7 @@ const AdminLogin = () => {
 
     const { email, password } = formData;
     const navigate = useNavigate(); 
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -25,12 +26,20 @@ const AdminLogin = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                alert('Login successful');
-                navigate('/admin');
+                if (data && data.authToken) {
+                    localStorage.setItem('token', data.authToken); // Store token in local storage
+                    navigate('/admin'); // Redirect to admin page
+                } else {
+                    console.error('Token not found in response:', data);
+                    // Handle the case where token is not received
+                }
+            } else {
+                console.error('Login failed:', data); // Log the error message received from the server
+                // Handle login failure, display error message to the user, etc.
             }
-            // console.log(data); 
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error:', error); // Log any unexpected errors
+            // Handle unexpected errors, display error message to the user, etc.
         }
     };
 

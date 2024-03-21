@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AdminSignup = () => {
+    const navigate=useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -29,6 +31,10 @@ const AdminSignup = () => {
             console.error('Error:', error);
         }
     };
+    const handleAdminLogin = () => {
+        navigate('/admin-login'); // Navigate to admin login page
+    };
+
 
     return (
         <div>
@@ -43,6 +49,7 @@ const AdminSignup = () => {
                     <input type="password" name="password" value={password} onChange={handleChange} required />
                 </div>
                 <button type="submit">Signup</button>
+                <button type="button" onClick={handleAdminLogin}>Admin Login</button>
             </form>
         </div>
     );
