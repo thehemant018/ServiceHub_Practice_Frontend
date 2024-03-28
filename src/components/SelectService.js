@@ -42,14 +42,29 @@ const SelectService = () => {
                 
             });
 
+            const responseData = await response.json();
+
+
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                if (response.status === 400 && responseData.error === 'Please subscribe to book services') {
+                    alert('Please subscribe to book services');
+                    navigate('/payment');
+                }
+                else if (response.status === 400 && responseData.error === 'Please wait a few minutes to approve the subscription') {
+                    alert('Please wait a few minutes to approve the subscription!');
+                    navigate('/payment');
+                } else {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
             }
 
+            if (response.ok) {
             console.log('Service booked successfully');
             alert('Service is Booked');
-
             navigate('/');
+            }
+
+            
         } catch (error) {
             console.error('Error booking service:', error.message);
         }

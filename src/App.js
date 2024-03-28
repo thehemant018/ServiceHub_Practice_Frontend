@@ -19,6 +19,7 @@ import ServiceFeedbackDetail from './components/ServiceFeedbackDetail';
 import AdminPage from './components/AdminPage';
 import AdminLogin from './components/AdminLogin';
 import AdminSignup from './components/AdminSignup';
+import Subscription from './components/Subscription';
 
 function App() {
   return (
@@ -44,6 +45,9 @@ function App() {
         <Route exact path="/admin" element={<AdminPage />}></Route>
         <Route exact path="/admin-login" element={<AdminLogin />}></Route>
         <Route exact path="/admin-signup" element={<AdminSignup />}></Route>
+
+        {/* 27 march */}
+        <Route exact path="/payment" element={<Subscription />}></Route>
       </Routes>
     </BrowserRouter>
     </>

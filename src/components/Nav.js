@@ -91,12 +91,14 @@ const Nav = () => {
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/admin-signup">Admin</Link>
                                 </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/payment">Subscription</Link>
+                                </li>
                             </>
                         )}
                     </ul>
                     {!isLoggedIn ? (
-                        <form className="d-flex">
-                             
+                        <form className="d-flex">  
                             <Link className="btn btn-primary mx-1" to="/login" role="button">Login</Link>
                             <Link className="btn btn-primary mx-1" to="/signup" role="button">Signup</Link>
                         </form>
